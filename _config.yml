@@ -30,7 +30,8 @@ twitter_username: jekyllrb
 github_username:  jekyll
 
 # Build settings
-theme: minima
+#Removed because we are not using gem based theme
+#theme: minima
 plugins:
   - jekyll-feed
 port: 4444
