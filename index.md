@@ -6,48 +6,48 @@
 ### Conversion Rate Prediction
 
 
-<img src="images/dummy_thumbnail.jpg?raw=true"/>
+<img src="test-repo/images/dummy_thumbnail.jpg?raw=true"/>
 
 
 This project does so and so....
 
 <br>
-[Notebook](/portfolio/conversion_rate)
+[Notebook](test-repo/portfolio/conversion_rate)
 
 ---
 ### Customer Segmentation Using Unsupervised Learning
 
 
-<img src="images/dummy_thumbnail.jpg?raw=true"/>
+<img src="test-repo/images/dummy_thumbnail.jpg?raw=true"/>
 
 
 This project does so and so....
 
 <br>
-[Notebook](/portfolio/ClusterGrocery)
+[Notebook](test-repo/portfolio/ClusterGrocery)
 
 ---
 ### Loan Repayment Prediction
 
 
-<img src="images/dummy_thumbnail.jpg?raw=true"/>
+<img src="test-repo/images/dummy_thumbnail.jpg?raw=true"/>
 
 
 This project does so and so....
 
 <br>
-[Notebook](/portfolio/LoanGrant)
+[Notebook](test-repo/portfolio/LoanGrant)
 ---
 
 ### Topic Modeling on Customer Feedback
 
-<img src="images/dummy_thumbnail.jpg?raw=true"/>
+<img src="test-repo/images/dummy_thumbnail.jpg?raw=true"/>
 
 
 This project does so and so....
 
 <br>
-[Notebook](/portfolio/bottest_new)
+[Notebook](test-repo/portfolio/bottest_new)
 ---
 
 
