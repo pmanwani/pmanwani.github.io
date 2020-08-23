@@ -47,7 +47,7 @@ This project does so and so....
 This project does so and so....
 
 <br>
-[Notebook](/portfolio/bottest_new)
+[Notebook](test-repo/portfolio/bottest_new)
 ---
 
 
