@@ -5,7 +5,8 @@ date:   2020-08-23 15:03:14 -0400
 categories: jekyll update
 ---
 
-<font color="grey" size = 4><i>Skills: K-means Clustering, PCA, Silhouette Score </i></font>
+<font color="grey" size = 4><i>Skills: K-means Clustering, PCA, Silhouette Score </i></font><br>
+Unsupervised Learning technique to cluster items together that would replace old and manually created categories.
 
 We have two datasets:<br>
 1. ***item_to_id*** which has information on the item and it's corresponding ID to uniquely identify each product.<br>
