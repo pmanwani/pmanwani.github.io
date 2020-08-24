@@ -1,3 +1,11 @@
+---
+layout: post
+title:  "Clustering Grocery Items"
+date:   2020-08-23 15:03:14 -0400
+categories: jekyll update
+---
+
+
 Company XYZ is an online grocery store. In the current version of the website, they have manually grouped the items into a few categories based on their experience.
 
 However, they now have a lot of data about user purchase history. Therefore, they would like to put the data into use! This is what they asked you to do:

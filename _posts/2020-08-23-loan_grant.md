@@ -1,3 +1,11 @@
+---
+layout: post
+title:  "Loan Grant"
+date:   2020-08-23 15:03:14 -0400
+categories: jekyll update
+---
+
+
 Bank-loan-prediction
 Problem statement
 
