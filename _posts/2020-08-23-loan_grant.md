@@ -8,6 +8,7 @@ categories: jekyll update
 
 <font color="grey" size = 4><i>Skills: Python, Scikit-learn, EDA, LightGBM</i></font><br>
 A LightGBM Model to identify borrowers who are most likely to repay a loan,thus resulting in a profitable bank.
+![png](/images/loan_grant/loan_grant.png)
 
 ## Business Problem
 The two most critical questions in the lending industry are: 1) How risky is the borrower? 2) Given the borrower’s risk, should we lend him/her? The answer to the first question determines the interest rate the borrower would have. Interest rate measures among other things (such as time value of money) the riskness of the borrower, i.e. the riskier the borrower, the higher the interest rate.

@@ -6,6 +6,7 @@ categories: jekyll update
 ---
 
 <font color="grey" size = 4><i>Skills: NLP, SVM, Multi Class LogisticRegression, Multinomial Naive Bayes, Cosine similarity</i></font><br>
+![png](/images/bot/chatbot.png)
 An FAQ Chatbot to help answer queries in real time using NLP. Devised supervised learning model to predict the category of the question asked and used similarity matrix to find a question closest to the one asked by the customer.
 
 ### Business Problem
