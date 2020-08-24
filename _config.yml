@@ -26,6 +26,7 @@ baseurl: "/test-repo" # the subpath of your site, e.g. /blog
 url: "https://pmanwani.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  pmanwani
 author: Prerna Manwani
+linkedin_username: prerna-manwani
 copyright: Prerna Manwani
 
 
