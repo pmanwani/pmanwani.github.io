@@ -6,7 +6,7 @@ categories: jekyll update
 ---
 
 
-<font color="grey" size = 4><i>Skills: Python, Scikit-learn, EDA, LightGBM</i></font>
+<font color="grey" size = 4><i>Skills: Python, Scikit-learn, EDA, LightGBM</i></font><br>
 A LightGBM Model to identify borrowers who are most likely to repay a loan, and thus resulting in a profitable bank.
 
 ## Business Problem
