@@ -5,8 +5,6 @@ date:   2020-08-23 15:03:14 -0400
 categories: jekyll update
 ---
 
-
-## Retrieval Chatbot
 <font color="grey" size = 4><i>Skills: NLP, SVM, Multi Class LogisticRegression, Multinomial Naive Bayes, Cosine similarity</i></font>
 
 ### Business Problem

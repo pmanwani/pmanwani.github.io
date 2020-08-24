@@ -1,19 +1,30 @@
 ---
 layout: post
-title:  "Clustering Grocery Items"
+title:  "Item Clustering by User Purchase History"
 date:   2020-08-23 15:03:14 -0400
 categories: jekyll update
 ---
 
+<font color="grey" size = 4><i>Skills: K-means Clustering, PCA, Silhouette Score </i></font>
 
-Company XYZ is an online grocery store. In the current version of the website, they have manually grouped the items into a few categories based on their experience.
+We have two datasets:<br>
+1. ***item_to_id*** which has information on the item and it's corresponding ID to uniquely identify each product.<br>
+2. ***purchase_history*** which contains information on user's purchase history. The products users tend to buy together.<br>
+We can use these datasets to come up with interesting insights that may help expand the business.
 
-However, they now have a lot of data about user purchase history. Therefore, they would like to put the data into use! This is what they asked you to do:
+### Business Questions:
 
-The company founder wants to meet with some of the best customers to go through a focus group with them. You are asked to send the ID of the following customers to the founder:
-the customer who bought the most items overall in her lifetime
-for each item, the customer who bought that product the most
-Cluster items based on user co-purchase history. That is, create clusters of products that have the highest probability of being bought together. The goal of this is to replace the old/manually created categories with these new ones. Each item can belong to just one cluster.
+#### Target Audience
+1. Identify top 10 customers who bought the most items overall
+2. For each item, identify the customer who bought that product the most
+
+This will help us identify our most valuable and loyal customers who can then advocate for our business.
+
+#### Cluster Items
+
+1. Cluster items based on user co-purchase history. That is, create clusters of products that have the highest probability of being bought together. The goal of this is to replace the old/manually created categories with these new ones. Each item can belong to just one cluster.
+
+
 
 
 ```python
@@ -28,11 +39,16 @@ from sklearn.preprocessing import normalize
 from sklearn.decomposition import PCA
 from sklearn.cluster import KMeans
 from sklearn.metrics import silhouette_score
+from sklearn.metrics.pairwise import cosine_similarity
 
 import matplotlib.pyplot as plt
 plt.style.use('ggplot')
 %matplotlib inline
 ```
+
+### Load and Inspect Data
+
+There are 48 unique items in the inventory.
 
 
 ```python
@@ -376,73 +392,9 @@ purchase.head()
 
 
 
+#### Data Summary
 
-```python
-item.describe()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th></th>
-      <th>Item_id</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>count</th>
-      <td>48.00</td>
-    </tr>
-    <tr>
-      <th>mean</th>
-      <td>24.50</td>
-    </tr>
-    <tr>
-      <th>std</th>
-      <td>14.00</td>
-    </tr>
-    <tr>
-      <th>min</th>
-      <td>1.00</td>
-    </tr>
-    <tr>
-      <th>25%</th>
-      <td>12.75</td>
-    </tr>
-    <tr>
-      <th>50%</th>
-      <td>24.50</td>
-    </tr>
-    <tr>
-      <th>75%</th>
-      <td>36.25</td>
-    </tr>
-    <tr>
-      <th>max</th>
-      <td>48.00</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
+There are 39,474 purchases made by 24,885 unique customers. Data has no missing values.
 
 
 ```python
@@ -502,64 +454,9 @@ purchase.isnull().sum()
 
 
 
+#### Data Pre-processing
 
-```python
-sorted(item['Item_id'].unique())
-```
-
-
-
-
-    [1,
-     2,
-     3,
-     4,
-     5,
-     6,
-     7,
-     8,
-     9,
-     10,
-     11,
-     12,
-     13,
-     14,
-     15,
-     16,
-     17,
-     18,
-     19,
-     20,
-     21,
-     22,
-     23,
-     24,
-     25,
-     26,
-     27,
-     28,
-     29,
-     30,
-     31,
-     32,
-     33,
-     34,
-     35,
-     36,
-     37,
-     38,
-     39,
-     40,
-     41,
-     42,
-     43,
-     44,
-     45,
-     46,
-     47,
-     48]
-
-
+In order to get any meaningful insights from the dataset, we will have to some pre-processing. We will create a frequency table for each item by every user. If a user buys a specific item 2 times we will have (user,item) = 2 in the table.
 
 
 ```python
@@ -774,12 +671,12 @@ user_item_cnt.head()
 
 
 
-# The customer who bought the most items overall in her lifetime
+### Top 10 customers who bought the most items
 
 
 ```python
 user_count = user_item_cnt.sum(axis = 1).sort_values(ascending = False).reset_index().rename(columns = {0:'item_cnt'})
-user_count.head()
+user_count.head(10)
 ```
 
 
@@ -833,13 +730,38 @@ user_count.head()
       <td>377284</td>
       <td>63</td>
     </tr>
+    <tr>
+      <th>5</th>
+      <td>1485538</td>
+      <td>62</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>917199</td>
+      <td>62</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>718218</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>653800</td>
+      <td>60</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>828721</td>
+      <td>58</td>
+    </tr>
   </tbody>
 </table>
 </div>
 
 
 
-# For each item, the customer who bought that product the most
+### For each item, the customer who bought that product the most
 
 
 ```python
@@ -1126,9 +1048,21 @@ item_max
 
 
 
+We were able to get all the users who bought maximum number of each item.Identifying a target audience provides a clear focus of whom your business will serve and why those consumers need your goods or services. Determining this information also keeps a target audience at a manageable level.
+
+## Clustering of Items
+
+### Item-Item Similiarity Matrix
+
+To cluster items we would first create a cosine similarity matrix.<br>
+***Cosine similarity*** is a metric that can be used to determine how similar the documents/terms are irrespective of their magnitude.
+Mathematically, it measures the cosine of the angle between two vectors projected in a multi-dimensional space.When plotted on a multi-dimensional space, where each dimension corresponds to a word , the cosine similarity captures the orientation (the angle) of the terms and not the magnitude. If you want the magnitude, compute the Euclidean distance instead.
+
+The cosine similarity is advantageous because even if the two similar items are far apart by the Euclidean distance because of the size (like, the word ‘fruit’ was purchased 10 times by 1 user and 1 time by other) they could still have a smaller angle between them. Smaller the angle, higher the similarity. 
+
 
 ```python
-pd.merge(left = item,right = item_max,on ='Item_id',how = 'left' )
+user_item_cnt.head()
 ```
 
 
@@ -1152,387 +1086,6 @@ pd.merge(left = item,right = item_max,on ='Item_id',how = 'left' )
   <thead>
     <tr style="text-align: right;">
       <th></th>
-      <th>Item_name</th>
-      <th>Item_id</th>
-      <th>max_user</th>
-      <th>max_cnt</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <th>0</th>
-      <td>coffee</td>
-      <td>43</td>
-      <td>16510</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>1</th>
-      <td>tea</td>
-      <td>23</td>
-      <td>15251</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>2</th>
-      <td>juice</td>
-      <td>38</td>
-      <td>4231</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>3</th>
-      <td>soda</td>
-      <td>9</td>
-      <td>4445</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>4</th>
-      <td>sandwich loaves</td>
-      <td>39</td>
-      <td>9918</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>5</th>
-      <td>dinner rolls</td>
-      <td>37</td>
-      <td>749</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>6</th>
-      <td>tortillas</td>
-      <td>34</td>
-      <td>5085</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>7</th>
-      <td>bagels</td>
-      <td>13</td>
-      <td>10799</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>8</th>
-      <td>canned vegetables</td>
-      <td>28</td>
-      <td>3400</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>9</th>
-      <td>spaghetti sauce</td>
-      <td>26</td>
-      <td>16026</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>10</th>
-      <td>ketchup</td>
-      <td>41</td>
-      <td>2192</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>11</th>
-      <td>cheeses</td>
-      <td>21</td>
-      <td>14597</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>12</th>
-      <td>eggs</td>
-      <td>14</td>
-      <td>2855</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>13</th>
-      <td>milk</td>
-      <td>16</td>
-      <td>1175</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>14</th>
-      <td>yogurt</td>
-      <td>48</td>
-      <td>5575</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>15</th>
-      <td>butter</td>
-      <td>8</td>
-      <td>2493</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>16</th>
-      <td>cereals</td>
-      <td>11</td>
-      <td>6111</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>17</th>
-      <td>flour</td>
-      <td>30</td>
-      <td>375</td>
-      <td>2</td>
-    </tr>
-    <tr>
-      <th>18</th>
-      <td>sugar</td>
-      <td>1</td>
-      <td>512</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>19</th>
-      <td>pasta</td>
-      <td>31</td>
-      <td>4803</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>20</th>
-      <td>waffles</td>
-      <td>5</td>
-      <td>3605</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>21</th>
-      <td>frozen vegetables</td>
-      <td>22</td>
-      <td>19892</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>22</th>
-      <td>ice cream</td>
-      <td>36</td>
-      <td>4445</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>23</th>
-      <td>poultry</td>
-      <td>6</td>
-      <td>5555</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>24</th>
-      <td>beef</td>
-      <td>17</td>
-      <td>6085</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>25</th>
-      <td>pork</td>
-      <td>47</td>
-      <td>6419</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>26</th>
-      <td>bananas</td>
-      <td>46</td>
-      <td>20214</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>27</th>
-      <td>berries</td>
-      <td>40</td>
-      <td>634</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>28</th>
-      <td>cherries</td>
-      <td>25</td>
-      <td>1094</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>29</th>
-      <td>grapefruit</td>
-      <td>20</td>
-      <td>14623</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>30</th>
-      <td>apples</td>
-      <td>32</td>
-      <td>1771</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>31</th>
-      <td>broccoli</td>
-      <td>44</td>
-      <td>512</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>32</th>
-      <td>carrots</td>
-      <td>10</td>
-      <td>10238</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>33</th>
-      <td>cauliflower</td>
-      <td>45</td>
-      <td>19857</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>34</th>
-      <td>cucumbers</td>
-      <td>42</td>
-      <td>1303</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>35</th>
-      <td>lettuce</td>
-      <td>2</td>
-      <td>512</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>36</th>
-      <td>laundry detergent</td>
-      <td>18</td>
-      <td>15193</td>
-      <td>5</td>
-    </tr>
-    <tr>
-      <th>37</th>
-      <td>dishwashing</td>
-      <td>27</td>
-      <td>15840</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>38</th>
-      <td>paper towels</td>
-      <td>24</td>
-      <td>3154</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>39</th>
-      <td>toilet paper</td>
-      <td>33</td>
-      <td>21668</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>40</th>
-      <td>aluminum foil</td>
-      <td>15</td>
-      <td>2356</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>41</th>
-      <td>sandwich bags</td>
-      <td>7</td>
-      <td>2926</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>42</th>
-      <td>shampoo</td>
-      <td>12</td>
-      <td>9261</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>43</th>
-      <td>soap</td>
-      <td>35</td>
-      <td>7526</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>44</th>
-      <td>hand soap</td>
-      <td>29</td>
-      <td>6565</td>
-      <td>4</td>
-    </tr>
-    <tr>
-      <th>45</th>
-      <td>shaving cream</td>
-      <td>19</td>
-      <td>512</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>46</th>
-      <td>baby items</td>
-      <td>4</td>
-      <td>92</td>
-      <td>3</td>
-    </tr>
-    <tr>
-      <th>47</th>
-      <td>pet items</td>
-      <td>3</td>
-      <td>2552</td>
-      <td>4</td>
-    </tr>
-  </tbody>
-</table>
-</div>
-
-
-
-# Item-Item Similiarity Matrix
-
-
-```python
-from sklearn.preprocessing import normalize
-user_item_norm = normalize(user_item_cnt.values, axis=0)
-similarity = np.dot(user_item_norm.T,user_item_norm)  # calculate the similarity matrix
-similarity_df = pd.DataFrame(similarity, index=user_item_cnt.columns, columns=user_item_cnt.columns)
-similarity_df.head()
-```
-
-
-
-
-<div>
-<style scoped>
-    .dataframe tbody tr th:only-of-type {
-        vertical-align: middle;
-    }
-
-    .dataframe tbody tr th {
-        vertical-align: top;
-    }
-
-    .dataframe thead th {
-        text-align: right;
-    }
-</style>
-<table border="1" class="dataframe">
-  <thead>
-    <tr style="text-align: right;">
-      <th>Item_id</th>
       <th>1</th>
       <th>2</th>
       <th>3</th>
@@ -1556,7 +1109,7 @@ similarity_df.head()
       <th>48</th>
     </tr>
     <tr>
-      <th>Item_id</th>
+      <th>user_id</th>
       <th></th>
       <th></th>
       <th></th>
@@ -1578,6 +1131,190 @@ similarity_df.head()
       <th></th>
       <th></th>
       <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>47</th>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>68</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>113</th>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>123</th>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>223</th>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 48 columns</p>
+</div>
+
+
+
+
+```python
+user_item_cnt_transpose = user_item_cnt.T
+similarity = cosine_similarity(user_item_cnt_transpose,user_item_cnt_transpose)
+similarity_df = pd.DataFrame(similarity, index=user_item_cnt.columns, columns=user_item_cnt.columns)
+```
+
+
+```python
+similarity_df[:5]
+```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>1</th>
+      <th>2</th>
+      <th>3</th>
+      <th>4</th>
+      <th>5</th>
+      <th>6</th>
+      <th>7</th>
+      <th>8</th>
+      <th>9</th>
+      <th>10</th>
+      <th>...</th>
+      <th>39</th>
+      <th>40</th>
+      <th>41</th>
+      <th>42</th>
+      <th>43</th>
+      <th>44</th>
+      <th>45</th>
+      <th>46</th>
+      <th>47</th>
+      <th>48</th>
     </tr>
   </thead>
   <tbody>
@@ -1708,21 +1445,16 @@ similarity_df.head()
 
 
 
+### Feature Selection Using PCA
 
-```python
-from sklearn.decomposition import PCA
-from sklearn.cluster import KMeans
-from sklearn.metrics import silhouette_score
-```
-
-# Clustering(K-means with PCA)
+Now that we have the similarity matrix, we can cluster the items based on the cosine similarity score but before that we will use PCA to reduce the dimension of the dataset.<br>
+PCA will help us to discover which dimensions in the dataset best maximize the variance of features involved. In addition to finding these dimensions, PCA will also report the explained variance ratio of each dimension — how much variance within the data is explained by that dimension alone.
 
 
 ```python
-pca = PCA()
-items_rotate = pca.fit_transform(similarity_df)
+pca_model = PCA()
+items_rotate = pca_model.fit_transform(similarity_df)
 
-items_rotate
 items_rotate = pd.DataFrame(items_rotate,index=user_item_cnt.columns,
                         columns=["pc{}".format(idx+1) for idx in range(item.shape[0])])
 items_rotate.head()
@@ -1770,30 +1502,6 @@ items_rotate.head()
       <th>pc46</th>
       <th>pc47</th>
       <th>pc48</th>
-    </tr>
-    <tr>
-      <th>Item_id</th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -1924,36 +1632,142 @@ items_rotate.head()
 
 
 
+### Dimensionality Reduction
+When using principal component analysis, one of the main goals is to reduce the dimensionality of the data — in effect, reducing the complexity of the problem. Dimensionality reduction comes at a cost: Fewer dimensions used implies less of the total variance in the data is being explained. Because of this, the cumulative explained variance ratio is extremely important for knowing how many dimensions are necessary for the problem. We can even visualize the components and variance explained by each of them.
+
+
+```python
+fig = plt.figure(figsize=(10, 10))
+plt.bar(range(1,len(pca_model.explained_variance_)+1),pca_model.explained_variance_)
+plt.ylabel('Explained variance')
+plt.xlabel('Components')
+plt.title("Explained variance plot")
+```
+
+
+
+
+    Text(0.5, 1.0, 'Explained variance plot')
+
+
+
+
+![png](/images/clustering/output_27_1.png)
+
+
+
+```python
+plt.plot(pca_model.explained_variance_ratio_)
+plt.xlabel('number of components')
+plt.ylabel('cumulative explained variance')
+plt.title("Explained Variance Ratio Plot")
+plt.show()
+```
+
+
+![png](/images/clustering/output_28_0.png)
+
+
 
 ```python
 # show the total variance which can be explained by first K principle components
-explained_variance_by_k = pca.explained_variance_ratio_.cumsum()
-explained_variance_by_k
+explained_variance_by_k = pca_model.explained_variance_ratio_.cumsum()
+
 plt.plot(range(1,len(explained_variance_by_k)+1),explained_variance_by_k,marker="*")
+plt.title("PCA Cumulative Variance Plot")
 ```
 
 
 
 
-    [<matplotlib.lines.Line2D at 0x11f761b80>]
+    Text(0.5, 1.0, 'PCA Cumulative Variance Plot')
 
 
 
 
-![png](output_22_1.png)
+![png](/images/clustering/output_29_1.png)
 
+
+We can see 35 principal components can explain upto 90% variance in the dataset. 
 
 
 ```python
-sum(pca.explained_variance_ratio_[:30])
+sum(pca_model.explained_variance_ratio_[:35])
 ```
 
 
 
 
-    0.8568104305151689
+    0.9036104968698064
 
 
+
+### K-means Clustering
+
+We are going to use K-means clustering to identify the clusters for our items.<br>
+Advantages of k-means
+1. Relatively simple to implement.
+2. Scales to large data sets.
+3. Guarantees convergence.
+4. Easily adapts to new examples.
+5. Generalizes to clusters of different shapes and sizes, such as elliptical clusters.<br>
+
+***Random Initialization***:
+In some cases, if the initialization of clusters is not appropriate, K-Means can result in arbitrarily bad clusters. This is where K-Means++ helps. It specifies a procedure to initialize the cluster centers before moving forward with the standard k-means clustering algorithm. It will randomly choose a centroid, calculate the distance of every point from it and the point which has the maximum distance from the centroid will be chosen as the second centroid.
+
+#### Creating Clusters
+When the number of clusters is not known a priori like in this problem, there is no guarantee that a given number of clusters best segments the data, since it is unclear what structure exists in the data — if any. However, we can quantify the "goodness" of a clustering by calculating each data point's ***silhouette coefficient*** and ***inertia***.<br>
+The silhouette coefficient for a data point measures how similar it is to its assigned cluster from -1 (dissimilar) to 1 (similar). Calculating the mean silhouette coefficient provides for a simple scoring method of a given clustering.<br>
+Inertia: It is defined as the mean squared distance between each instance and its closest centroid. Logically, as per the definition lower the inertia better the model.
+
+
+```python
+#We will use 25 pca components
+items_filter = items_rotate.values[:,:25]
+```
+
+
+```python
+clusters = range(5, 20)
+inertias = []
+silhouettes = []
+
+for n_clusters in clusters:
+    model = KMeans(n_clusters=n_clusters, init='k-means++', random_state=42, n_jobs=1)
+    label = model.fit_predict(items_filter)
+    
+    inertias.append(model.inertia_)
+    silhouettes.append(silhouette_score(items_filter, label))
+```
+
+
+```python
+fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(18, 6))
+ax[0].plot(clusters, inertias, 'o-', label='Sum of Squared Distances')
+ax[0].grid(True)
+ax[1].plot(clusters, silhouettes, 'o-', label='Silhouette Coefficient')
+ax[1].grid(True)
+plt.legend(fontsize=12)
+plt.tight_layout()
+plt.show()
+
+```
+
+
+![png](/images/clustering/output_35_0.png)
+
+
+Silhouette coefficient plateaued after 14 so 14 clusters look optimal.
+
+### Cluster Visualization
+
+We can see 14 clusters are created and items are clearly sorted. We were able to reduce dimensionality and ended up using just 25 features.<br>
+Items are sorted as bakery items(Cluster 4) such as bagels
+,tortillas
+,dinner rolls
+,sandwich loaves and canned goods(cluster 1) such as  spaghetti sauce
+,canned vegetables
+,ketchup. Similarly, we have other clusters as well.
 
 
 ```python
@@ -1962,7 +1776,7 @@ def show_clusters(items_rotated,labels):
     plot and print clustering result
     """
     fig = plt.figure(figsize=(15, 15))
-    colors =  itertools.cycle (["b","g","r","c","m","y","k"])
+    colors =  itertools.cycle (["blue","green","red","cyan","yellow","purple","orange","olive","seagreen","magenta","brown","lightpink","indigo","aqua","teal"])
 
     grps = items_rotated.groupby(labels)
     for label,grp in grps:
@@ -1976,7 +1790,6 @@ def show_clusters(items_rotated,labels):
             names = item[item['Item_id'] == j]["Item_name"].to_string(index = False)
             print(j,names)
             
-        #names = item.loc[[grp.index],"Item_name"]
         
 
     # annotate
@@ -1984,7 +1797,6 @@ def show_clusters(items_rotated,labels):
         x = items_rotated.loc[itemid,"pc1"]
         y = items_rotated.loc[itemid,"pc2"]
         name = item[item['Item_id'] == itemid]["Item_name"].to_string(index = False)
-        #name = re.sub('\W', ' ', name)
         plt.text(x,y,name)
 ```
 
@@ -1996,160 +1808,102 @@ def cluster(n_clusters,n_components=48):
     n_clusters: the number of clusters we want to cluster
     """
     print("first {} PC explain {:.1f}% variances".format(n_components,
-                                                         100 * sum(pca.explained_variance_ratio_[:n_components])))
+                                                         100 * sum(pca_model.explained_variance_ratio_[:n_components])))
 
-    kmeans = KMeans(n_clusters=n_clusters,init='k-means++', random_state=42, n_jobs=1)
-    kmeans.fit(items_rotate.values[:, :n_components])
+    kmeans_model = KMeans(n_clusters=n_clusters,init='k-means++', random_state=42, n_jobs=1)
+    kmeans_model.fit(items_rotate.values[:, :n_components])
 
     # display results
-    show_clusters(items_rotate, kmeans.labels_)
+    show_clusters(items_rotate, kmeans_model.labels_)
 ```
 
 
 ```python
-kmeans = KMeans(n_clusters=5)
-kmeans.fit(items_rotate.values[:, :30])
+
+cluster(n_clusters = 14,n_components=25)
 ```
 
-
-
-
-    KMeans(algorithm='auto', copy_x=True, init='k-means++', max_iter=300,
-           n_clusters=5, n_init=10, n_jobs=None, precompute_distances='auto',
-           random_state=None, tol=0.0001, verbose=0)
-
-
-
-
-```python
-cluster(n_clusters = 16,n_components=30)
-```
-
-    first 30 PC explain 85.7% variances
+    first 25 PC explain 79.8% variances
     *********** Label [0] ***********
-    Int64Index([6, 17, 47], dtype='int64', name='Item_id')
-    6  poultry
-    17  beef
-    47  pork
+    Int64Index([26, 28, 41], dtype='int64')
+    26  spaghetti sauce
+    28  canned vegetables
+    41  ketchup
     *********** Label [1] ***********
-    Int64Index([30], dtype='int64', name='Item_id')
+    Int64Index([30], dtype='int64')
     30  flour
     *********** Label [2] ***********
-    Int64Index([1, 3, 20, 22, 25, 32, 40, 46], dtype='int64', name='Item_id')
+    Int64Index([1, 3, 20, 25, 32, 40, 46], dtype='int64')
     1  sugar
     3  pet items
     20  grapefruit
-    22  frozen vegetables
     25  cherries
     32  apples
     40  berries
     46  bananas
     *********** Label [3] ***********
-    Int64Index([4, 19], dtype='int64', name='Item_id')
-    4  baby items
-    19  shaving cream
-    *********** Label [4] ***********
-    Int64Index([24, 33], dtype='int64', name='Item_id')
-    24  paper towels
-    33  toilet paper
-    *********** Label [5] ***********
-    Int64Index([5, 11], dtype='int64', name='Item_id')
-    5  waffles
-    11  cereals
-    *********** Label [6] ***********
-    Int64Index([12, 29, 35], dtype='int64', name='Item_id')
+    Int64Index([12, 19, 29, 35], dtype='int64')
     12  shampoo
+    19  shaving cream
     29  hand soap
     35  soap
-    *********** Label [7] ***********
-    Int64Index([13, 34, 37, 39], dtype='int64', name='Item_id')
+    *********** Label [4] ***********
+    Int64Index([13, 34, 37, 39], dtype='int64')
     13  bagels
     34  tortillas
     37  dinner rolls
     39  sandwich loaves
+    *********** Label [5] ***********
+    Int64Index([7, 15, 24, 33], dtype='int64')
+    7  sandwich bags
+    15  aluminum foil
+    24  paper towels
+    33  toilet paper
+    *********** Label [6] ***********
+    Int64Index([2, 10, 42, 44, 45], dtype='int64')
+    2  lettuce
+    10  carrots
+    42  cucumbers
+    44  broccoli
+    45  cauliflower
+    *********** Label [7] ***********
+    Int64Index([5, 11, 31], dtype='int64')
+    5  waffles
+    11  cereals
+    31  pasta
     *********** Label [8] ***********
-    Int64Index([8, 14, 16, 21, 48], dtype='int64', name='Item_id')
+    Int64Index([8, 14, 16, 21, 48], dtype='int64')
     8  butter
     14  eggs
     16  milk
     21  cheeses
     48  yogurt
     *********** Label [9] ***********
-    Int64Index([31], dtype='int64', name='Item_id')
-    31  pasta
-    *********** Label [10] ***********
-    Int64Index([2, 10, 42, 44, 45], dtype='int64', name='Item_id')
-    2  lettuce
-    10  carrots
-    42  cucumbers
-    44  broccoli
-    45  cauliflower
-    *********** Label [11] ***********
-    Int64Index([9, 23, 36, 38, 43], dtype='int64', name='Item_id')
+    Int64Index([9, 23, 38, 43], dtype='int64')
     9  soda
     23  tea
-    36  ice cream
     38  juice
     43  coffee
-    *********** Label [12] ***********
-    Int64Index([7], dtype='int64', name='Item_id')
-    7  sandwich bags
-    *********** Label [13] ***********
-    Int64Index([15], dtype='int64', name='Item_id')
-    15  aluminum foil
-    *********** Label [14] ***********
-    Int64Index([26, 28, 41], dtype='int64', name='Item_id')
-    26  spaghetti sauce
-    28  canned vegetables
-    41  ketchup
-    *********** Label [15] ***********
-    Int64Index([18, 27], dtype='int64', name='Item_id')
+    *********** Label [10] ***********
+    Int64Index([22, 36], dtype='int64')
+    22  frozen vegetables
+    36  ice cream
+    *********** Label [11] ***********
+    Int64Index([18, 27], dtype='int64')
     18  laundry detergent
     27  dishwashing 
+    *********** Label [12] ***********
+    Int64Index([4], dtype='int64')
+    4  baby items
+    *********** Label [13] ***********
+    Int64Index([6, 17, 47], dtype='int64')
+    6  poultry
+    17  beef
+    47  pork
 
 
 
-![png](output_27_1.png)
-
-
-
-```python
-items_filter = items_rotate.values[:,:30]
-```
-
-
-```python
-# determine the best number of clusters
-clusters = range(2, 30)
-inertias = []
-silhouettes = []
-
-for n_clusters in clusters:
-    kmeans = KMeans(n_clusters=n_clusters, init='k-means++', random_state=42, n_jobs=1)
-    kmeans = kmeans.fit(items_filter)
-    label = kmeans.predict(items_filter)
-    
-    inertias.append(kmeans.inertia_)
-    silhouettes.append(silhouette_score(items_filter, label))
-```
-
-
-```python
-# visualization
-fig, ax = plt.subplots(nrows=1, ncols=2, figsize=(18, 6))
-ax[0].plot(clusters, inertias, 'o-', label='Sum of Squared Distances')
-ax[0].grid(True)
-ax[1].plot(clusters, silhouettes, 'o-', label='Silhouette Coefficient')
-ax[1].grid(True)
-plt.legend(fontsize=12)
-plt.tight_layout()
-plt.show()
-
-#16 clusters seem optimal based on silhouette score. Higher the better.
-```
-
-
-![png](output_30_0.png)
+![png](/images/clustering/output_40_1.png)
 
 
 
