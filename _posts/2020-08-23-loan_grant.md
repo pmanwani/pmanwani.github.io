@@ -5,7 +5,7 @@ date:   2020-08-23 15:03:14 -0400
 categories: jekyll update
 ---
 
-# Loan Repayment Prediction 
+
 <font size = 4, color="grey">*Skills: Python, Scikit-learn, EDA, LightGBM*</font>
 
 ## Business Problem
@@ -1179,7 +1179,7 @@ plt.show()
 ```
 
 
-![png](/images/output_34_0.png)
+![png](/images/loan_grant/output_34_0.png)
 
 
 ### Loan Repayment Rate by Number of dependents
@@ -1206,7 +1206,7 @@ plt.show()
 ```
 
 
-![png](/images/output_36_0.png)
+![png](/images/loan_grant/output_36_0.png)
 
 
 ### Loan Repayment Rate by Age
@@ -1238,7 +1238,7 @@ plt.show()
 ```
 
 
-![png](/images/output_38_0.png)
+![png](/images/loan_grant/output_38_0.png)
 
 
 ### Loan Repayment Rate by Employment status
@@ -1277,7 +1277,7 @@ plt.show()
 ```
 
 
-![png](/images/output_41_0.png)
+![png](/images/loan_grant/output_41_0.png)
 
 
 ### Loan Repayment Rate among first time loans¶
@@ -1306,7 +1306,7 @@ plt.show()
 ```
 
 
-![png](/images/output_43_0.png)
+![png](/images/loan_grant/output_43_0.png)
 
 
 ### Loan Repayment Rate by Previous Loan History
@@ -1333,7 +1333,7 @@ plt.show()
 ```
 
 
-![png](/images/output_45_0.png)
+![png](/images/loan_grant/output_45_0.png)
 
 
 ### Loan Repayment Rate by other loans
@@ -1360,7 +1360,7 @@ plt.show()
 ```
 
 
-![png](/images/output_47_0.png)
+![png](/images/loan_grant/output_47_0.png)
 
 
 ### Loan Repayment Rate by Credit Card Limit
@@ -1394,7 +1394,7 @@ plt.show()
 ```
 
 
-![png](/images/output_49_0.png)
+![png](/images/loan_grant/output_49_0.png)
 
 
 ### Loan Repayment Rate by Saving and Checking Amount
@@ -1427,7 +1427,7 @@ plt.show()
 ```
 
 
-![png](/images/output_51_0.png)
+![png](/images/loan_grant/output_51_0.png)
 
 
 
@@ -1454,7 +1454,7 @@ plt.show()
 ```
 
 
-![png](/images/output_52_0.png)
+![png](/images/loan_grant/output_52_0.png)
 
 
 ### Loan Repayment Rate by Yearly Salary
@@ -1487,7 +1487,7 @@ plt.show()
 ```
 
 
-![png](/images/output_54_0.png)
+![png](/images/loan_grant/output_54_0.png)
 
 
 ### Loan Repayment by Last Year's Credit Card Usage 
@@ -1530,7 +1530,7 @@ plt.show()
 ```
 
 
-![png](/images/output_58_0.png)
+![png](/images/loan_grant/output_58_0.png)
 
 
 ### Repayment By Month
@@ -1557,7 +1557,7 @@ plt.show()
 ```
 
 
-![png](/images/output_60_0.png)
+![png](/images/loan_grant/output_60_0.png)
 
 
 We can even look at the relationship of various variables together such as loan purpose by is_employed and loan_repaid. A lot of the borrowers who are unemployed apply for emergency loans.
@@ -1577,7 +1577,7 @@ sns.catplot("is_employed", col='loan_purpose', data=data, hue='loan_repaid', kin
 
 
 
-![png](/images/output_62_1.png)
+![png](/images/loan_grant/output_62_1.png)
 
 
 ## Feature Engineering 
@@ -1599,7 +1599,7 @@ sns.distplot(data['avg_percentage_credit_card_limit_used_last_year'])
 
 
 
-![png](/images/output_65_1.png)
+![png](/images/loan_grant/output_65_1.png)
 
 
 
@@ -2216,7 +2216,7 @@ plt.show()
 ```
 
 
-![png](/images/output_106_0.png)
+![png](/images/loan_grant/output_106_0.png)
 
 
 ### Bank Profit Calculation
@@ -2303,7 +2303,7 @@ plt.show()
 ```
 
 
-![png](/images/output_115_0.png)
+![png](/images/loan_grant/output_115_0.png)
 
 
 
@@ -2335,7 +2335,7 @@ plt.legend(loc='lower right')
 
 
 
-![png](/images/output_117_1.png)
+![png](/images/loan_grant/output_117_1.png)
 
 
 #### Classification Report at 0.5 threshold
@@ -2381,7 +2381,7 @@ plt.title('Confusion Matrix')
 
 
 
-![png](/images/output_120_1.png)
+![png](/images/loan_grant/output_120_1.png)
 
 
 #### Precision and Recall at 0.4 threshold
@@ -2441,7 +2441,7 @@ plt.title('Confusion Matrix at new threshold')
 
 
 
-![png](/images/output_125_1.png)
+![png](/images/loan_grant/output_125_1.png)
 
 
 ### Strategy for Denied Application
