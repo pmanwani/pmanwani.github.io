@@ -6,7 +6,7 @@ categories: jekyll update
 ---
 
 
-<font size = 4, color="grey">*Skills: Python, Scikit-learn, EDA, LightGBM*</font>
+<font color="grey" size = 4><i>Skills: Python, Scikit-learn, EDA, LightGBM</i></font>
 
 ## Business Problem
 The two most critical questions in the lending industry are: 1) How risky is the borrower? 2) Given the borrower’s risk, should we lend him/her? The answer to the first question determines the interest rate the borrower would have. Interest rate measures among other things (such as time value of money) the riskness of the borrower, i.e. the riskier the borrower, the higher the interest rate.
