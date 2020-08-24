@@ -28,14 +28,14 @@ github_username:  pmanwani
 author: Prerna Manwani
 linkedin_username: prerna-manwani
 copyright: Prerna Manwani
-
+#title-logo: /images/tom.png
 
 # Build settings
 #Removed because we are not using gem based theme
 #theme: minima
 plugins:
   - jekyll-feed
-port: 4444
+port: 3000
 # Exclude from processing.
 # The following items will not be processed, by default.
 # Any item listed under the `exclude:` key here will be automatically added to
