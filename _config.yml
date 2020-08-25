@@ -22,7 +22,7 @@ title: Data Science Portfolio
 #title-logo: /images/tom.png
 description: #>- # this means to ignore newlines until "baseurl:"
   I'm Prerna, a data enthusiast currently changing banking for good in New York! This website is a compilation of some of the cool projects I have been working on to fuel my
-  insatiable intellectual curiosity about data science technology. Feel free to check out my hobby projects here and on <a href="https://github.com/pmanwani">Github</a>.
+  insatiable intellectual curiosity about data science technology. Feel free to check out my hobby projects here and on [Github](https://github.com/pmanwani).
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "https://pmanwani.github.io" # the base hostname & protocol for your site, e.g. http://example.com
 github_username:  pmanwani
