@@ -6,8 +6,8 @@ categories: jekyll update
 ---
 
 <font color="grey" size = 4><i>Skills: NLP, SVM, Multi Class LogisticRegression, Multinomial Naive Bayes, Cosine similarity</i></font><br>
-![png](/images/bot/chatbot.png)
 An FAQ Chatbot to help answer queries in real time using NLP. Devised supervised learning model to predict the category of the question asked and used similarity matrix to find a question closest to the one asked by the customer.
+![png](/images/bot/chatbot.png)
 
 ### Business Problem
 This is a simple Q&A Chatbot designed to answer frequently asked questions by customers, without them having to wait to speak to a bank's customer representative. A well-defined FAQ chatbot improves your customers' journey multifold. Being able to ask questions in a conversational manner provides a better experience to your customers and prospects—and elevates your brand's image. It is quick and efficient.
